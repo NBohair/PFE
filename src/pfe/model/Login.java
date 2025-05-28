@@ -1,14 +1,15 @@
 package pfe.model;
 
 import javax.swing.*;
-import pfe.DB.DBConnection;
+import pfe.DB.DBConnection; // Keep for potential future use, but login logic moves
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+// Remove direct SQL imports as they are handled by Authentication class
+// import java.sql.Connection;
+// import java.sql.PreparedStatement;
+// import java.sql.ResultSet;
+// import java.sql.SQLException;
 import pfe.service.*;
 
 public class Login extends JFrame {
@@ -16,8 +17,10 @@ public class Login extends JFrame {
     private JPasswordField passwordField;
     private JButton loginButton;
     private JButton cancelButton;
+    private Authentication auth; // Add Authentication instance
 
     public Login() {
+        auth = new Authentication(); // Initialize Authentication
         initComponents();
     }
 
@@ -89,7 +92,7 @@ public class Login extends JFrame {
         loginButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                handleLogin(); // Call the new handleLogin method
+                handleLogin(); // Call the updated handleLogin method
             }
         });
         buttonPanel.add(loginButton);
@@ -98,12 +101,15 @@ public class Login extends JFrame {
         JButton signUpButton = new JButton("Sign Up");
         signUpButton.setFont(new Font("Arial", Font.BOLD, 14));
         signUpButton.setBackground(new Color(0, 153, 0)); // Button color
-        signUpButton.setForeground(Color.WHITE); 
-        signUpButton.setFocusPainted(false); 
+        signUpButton.setForeground(Color.WHITE);
+        signUpButton.setFocusPainted(false);
         signUpButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new SignUp().setVisible(true); // Open the Sign Up window
+                // Ensure SignUp class exists and is accessible
+                 new SignUp().setVisible(true);
+                 // Consider disposing the login window or hiding it
+                 // dispose(); 
             }
         });
         buttonPanel.add(signUpButton);
@@ -126,54 +132,70 @@ public class Login extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.gridwidth = 2;
-        gbc.insets = new Insets(20, 0, 0, 0); 
+        gbc.insets = new Insets(20, 0, 0, 0);
         mainPanel.add(buttonPanel, gbc);
 
         // Add main panel to frame
         add(mainPanel);
     }
 
+    // Updated handleLogin method using Authentication class
     private void handleLogin() {
         String username = usernameField.getText();
         String password = new String(passwordField.getPassword());
 
-        // Example of database connection and user validation
-        try {
-            // Establish a connection to the database
-            Connection connection = DBConnection.getConnection();
-            String query = "SELECT * FROM users WHERE username = ? AND password = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, password); // In a real application, use hashed passwords
+        if (username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter username and password.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-            ResultSet resultSet = preparedStatement.executeQuery();
+        User authenticatedUser = auth.login(username, password);
 
-            // Check if user exists
-            if (resultSet.next()) {
-                // User authenticated successfully
-                JOptionPane.showMessageDialog(this, "Login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                // Open the main application window
-                HomePageAdmin homePage = new HomePageAdmin();
-                homePage.setVisible(true);
-                dispose(); // Close the login window
-            } else {
-                // Invalid credentials
-                JOptionPane.showMessageDialog(this, "Invalid credentials", "Error", JOptionPane.ERROR_MESSAGE);
+        if (authenticatedUser != null) {
+            // User authenticated successfully
+            JOptionPane.showMessageDialog(this, "Login successful! Welcome " + authenticatedUser.getUsername(), "Success", JOptionPane.INFORMATION_MESSAGE);
+            
+            // Open the appropriate home page based on user role
+            // Assuming role is stored in authenticatedUser.getRole()
+            // This part needs the actual HomePage classes (HomePageAdmin, HomePageDoctor, HomePageUser)
+            // For now, let's default to HomePageAdmin as in the original code, but ideally check the role.
+            String role = authenticatedUser.getRole();
+            if ("admin".equalsIgnoreCase(role)) {
+                 new HomePageAdmin().setVisible(true);
+            } else if ("doctor".equalsIgnoreCase(role)) {
+                 new HomePageDoctor().setVisible(true);
+            } else { // Default to user or handle other roles
+                 new HomePageUser(authenticatedUser).setVisible(true);
             }
 
-            // Close the connection
-            resultSet.close();
-            preparedStatement.close();
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            dispose(); // Close the login window
+        } else {
+            // Authentication failed (message handled within auth.login or show a generic one here)
+            // JOptionPane.showMessageDialog(this, "Invalid username or password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
+            // The Authentication class already shows a message, so maybe no need for another one here.
         }
     }
 
     public static void main(String[] args) {
+        try {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+            System.err.println("Erreur lors de l'initialisation du Look and Feel: " + e.getMessage());
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception ex) {
+                System.err.println("Impossible de charger le Look and Feel système: " + ex.getMessage());
+            }
+        }
+        
         SwingUtilities.invokeLater(() -> {
             new Login().setVisible(true);
         });
     }
 }
+
