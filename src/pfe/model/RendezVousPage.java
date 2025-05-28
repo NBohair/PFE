@@ -37,20 +37,35 @@ public class RendezVousPage extends JFrame {
     private void initComponents() {
         setTitle("Gestion des Rendez-vous");
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+<<<<<<< HEAD
         setSize(850, 600);
+=======
+        setSize(850, 600); // Adjusted size slightly
+>>>>>>> b7d30f253ec7af623949e037e345c4cd1b37cecf
         setLocationRelativeTo(null);
         getContentPane().setBackground(new Color(240, 240, 240));
 
         // Initialize components
         doctorCombo = new JComboBox<>();
+<<<<<<< HEAD
         tableModel = new DefaultTableModel(new String[]{"Date", "Heure", "Médecin", "Motif"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
+=======
+        tableModel = new DefaultTableModel(new String[]{"Date", "Time", "Doctor", "Reason"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+               // Make table cells non-editable
+>>>>>>> b7d30f253ec7af623949e037e345c4cd1b37cecf
                return false;
             }
         };
         JTable appointmentTable = new JTable(tableModel);
+<<<<<<< HEAD
         appointmentTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+=======
+        appointmentTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // Allow single row selection
+>>>>>>> b7d30f253ec7af623949e037e345c4cd1b37cecf
         JScrollPane tableScroll = new JScrollPane(appointmentTable);
         tableScroll.setBorder(BorderFactory.createTitledBorder("Vos Rendez-vous"));
 
@@ -60,6 +75,7 @@ public class RendezVousPage extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.anchor = GridBagConstraints.WEST;
+<<<<<<< HEAD
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Date chooser
@@ -79,6 +95,29 @@ public class RendezVousPage extends JFrame {
         JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(timeSpinner, "HH:mm");
         timeSpinner.setEditor(timeEditor);
         timeSpinner.setPreferredSize(new Dimension(80, timeSpinner.getPreferredSize().height));
+=======
+        gbc.fill = GridBagConstraints.HORIZONTAL; // Allow components to expand horizontally
+
+        // Date chooser - Restricted to today and future dates
+        gbc.gridx = 0; gbc.gridy = 0;
+        formPanel.add(new JLabel("Date:"), gbc);
+        dateChooser = new JDateChooser();
+        dateChooser.setDateFormatString("yyyy-MM-dd");
+        dateChooser.setMinSelectableDate(new Date()); // Set minimum date to today
+        dateChooser.setPreferredSize(new Dimension(150, dateChooser.getPreferredSize().height)); // Set preferred width
+        gbc.gridx = 1; formPanel.add(dateChooser, gbc);
+
+        // Time spinner - Initialized to current time
+        gbc.gridx = 0; gbc.gridy = 1;
+        formPanel.add(new JLabel("Time (08:00-17:59):"), gbc); // Updated label
+        // Configure SpinnerDateModel for time selection
+        SpinnerDateModel timeModel = new SpinnerDateModel(new Date(), null, null, Calendar.MINUTE);
+        timeSpinner = new JSpinner(timeModel);
+        // Set editor to display time only (HH:mm format)
+        JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(timeSpinner, "HH:mm");
+        timeSpinner.setEditor(timeEditor);
+        timeSpinner.setPreferredSize(new Dimension(80, timeSpinner.getPreferredSize().height)); // Set preferred width
+>>>>>>> b7d30f253ec7af623949e037e345c4cd1b37cecf
         gbc.gridx = 1; formPanel.add(timeSpinner, gbc);
 
         // Doctor selection
@@ -88,22 +127,38 @@ public class RendezVousPage extends JFrame {
 
         // Reason
         gbc.gridx = 0; gbc.gridy = 3;
+<<<<<<< HEAD
         formPanel.add(new JLabel("Motif :"), gbc);
         reasonArea = new JTextArea(3, 20);
         JScrollPane reasonScroll = new JScrollPane(reasonArea);
         gbc.gridx = 1; gbc.gridy = 4; gbc.gridwidth = 1;
+=======
+        formPanel.add(new JLabel("Reason:"), gbc);
+        reasonArea = new JTextArea(3, 20);
+        JScrollPane reasonScroll = new JScrollPane(reasonArea);
+        gbc.gridx = 1; gbc.gridy = 4; gbc.gridwidth = 1; // Reset gridwidth if needed
+>>>>>>> b7d30f253ec7af623949e037e345c4cd1b37cecf
         formPanel.add(reasonScroll, gbc);
 
         // Buttons
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         JButton bookBtn = new JButton("Enregistrer");
         bookBtn.addActionListener(e -> bookRendezVous());
+<<<<<<< HEAD
         JButton cancelBtn = new JButton("Annuler");
         cancelBtn.addActionListener(e -> dispose());
         btnPanel.add(bookBtn);
         btnPanel.add(cancelBtn);
         gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.EAST;
+=======
+        JButton cancelBtn = new JButton("Cancel");
+        cancelBtn.addActionListener(e -> dispose()); // Close only this window
+        btnPanel.add(bookBtn);
+        btnPanel.add(cancelBtn);
+        gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2; // Span across two columns
+        gbc.anchor = GridBagConstraints.EAST; // Align button panel to the right
+>>>>>>> b7d30f253ec7af623949e037e345c4cd1b37cecf
         formPanel.add(btnPanel, gbc);
 
         // Main panel layout
@@ -135,16 +190,25 @@ public class RendezVousPage extends JFrame {
     private void loadRendezVous() {
         tableModel.setRowCount(0);
         if (user == null || user.getUserId() == null) {
+<<<<<<< HEAD
             System.err.println("Impossible de charger les rendez-vous : utilisateur ou ID utilisateur manquant.");
             return;
         }
         List<RendezVous> list = new RendezVousDAO().getRendezVousByUser(user.getUserId());
         SimpleDateFormat dbDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+=======
+            System.err.println("Cannot load appointments: User or User ID is null.");
+            return;
+        }
+        List<RendezVous> list = new RendezVousDAO().getRendezVousByUser(user.getUserId());
+        SimpleDateFormat dbDateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // Format expected from DB
+>>>>>>> b7d30f253ec7af623949e037e345c4cd1b37cecf
         SimpleDateFormat dateOnlyFormat = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat timeOnlyFormat = new SimpleDateFormat("HH:mm");
 
         for (RendezVous r : list) {
             try {
+<<<<<<< HEAD
                 Date dateTime = dbDateTimeFormat.parse(r.getDateTime());
                 tableModel.addRow(new Object[]{
                     dateOnlyFormat.format(dateTime),
@@ -157,6 +221,22 @@ public class RendezVousPage extends JFrame {
                 tableModel.addRow(new Object[]{r.getDateTime().split(" ")[0], "", r.getDoctorName(), r.getReason()});
             } catch (Exception e) {
                 System.err.println("Erreur lors du traitement du rendez-vous : " + r.getId() + " - " + e.getMessage());
+=======
+                // Parse the date/time string from the RendezVous object using DB format
+                Date dateTime = dbDateTimeFormat.parse(r.getDateTime());
+                tableModel.addRow(new Object[]{
+                    dateOnlyFormat.format(dateTime), // Display date part
+                    timeOnlyFormat.format(dateTime), // Display time part
+                    r.getDoctorName(), 
+                    r.getReason() // Display the reason
+                });
+            } catch (ParseException e) {
+                 System.err.println("Error parsing date/time from DB: " + r.getDateTime() + " - " + e.getMessage());
+                 // Attempt to display raw date if parsing fails
+                 tableModel.addRow(new Object[]{r.getDateTime().split(" ")[0], "", r.getDoctorName(), r.getReason()});
+            } catch (Exception e) {
+                System.err.println("Error processing appointment: " + r.getId() + " - " + e.getMessage());
+>>>>>>> b7d30f253ec7af623949e037e345c4cd1b37cecf
             }
         }
     }
@@ -170,10 +250,14 @@ public class RendezVousPage extends JFrame {
 
         // Basic validation
         if (selectedDate == null || doctor == null || doctor.equals("No doctors available") || reason.isEmpty()) {
+<<<<<<< HEAD
             JOptionPane.showMessageDialog(this, 
                 "Veuillez sélectionner une date, un médecin et saisir un motif.", 
                 "Erreur de saisie", 
                 JOptionPane.ERROR_MESSAGE);
+=======
+            JOptionPane.showMessageDialog(this, "Please select a date, doctor, and enter a reason.", "Input Error", JOptionPane.ERROR_MESSAGE);
+>>>>>>> b7d30f253ec7af623949e037e345c4cd1b37cecf
             return;
         }
 
@@ -188,6 +272,7 @@ public class RendezVousPage extends JFrame {
         combinedCal.set(Calendar.SECOND, 0);
         combinedCal.set(Calendar.MILLISECOND, 0);
 
+<<<<<<< HEAD
         // 1. Check if date is in the past
         Calendar todayCal = Calendar.getInstance();
         todayCal.set(Calendar.HOUR_OF_DAY, 0); 
@@ -200,10 +285,19 @@ public class RendezVousPage extends JFrame {
                 "Erreur de saisie", 
                 JOptionPane.ERROR_MESSAGE);
             return;
+=======
+        // 1. Check if date is in the past (redundant due to JDateChooser setting, but good practice)
+        Calendar todayCal = Calendar.getInstance();
+        todayCal.set(Calendar.HOUR_OF_DAY, 0); todayCal.set(Calendar.MINUTE, 0); todayCal.set(Calendar.SECOND, 0); todayCal.set(Calendar.MILLISECOND, 0);
+        if (combinedCal.getTime().before(todayCal.getTime())) {
+             JOptionPane.showMessageDialog(this, "Cannot book appointments for past dates.", "Input Error", JOptionPane.ERROR_MESSAGE);
+             return;
+>>>>>>> b7d30f253ec7af623949e037e345c4cd1b37cecf
         }
 
         // 2. Check if time is within working hours (8:00 to 17:59)
         int hour = combinedCal.get(Calendar.HOUR_OF_DAY);
+<<<<<<< HEAD
         if (hour < 8 || hour >= 18) {
             JOptionPane.showMessageDialog(this, 
                 "Les rendez-vous ne peuvent être pris qu'entre 08:00 et 17:59.", 
@@ -211,11 +305,19 @@ public class RendezVousPage extends JFrame {
                 JOptionPane.ERROR_MESSAGE);
             return;
         }
+=======
+        if (hour < 8 || hour >= 18) { // Hours are 0-23
+            JOptionPane.showMessageDialog(this, "Appointments can only be booked between 08:00 and 17:59.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        // --- End Validation ---
+>>>>>>> b7d30f253ec7af623949e037e345c4cd1b37cecf
 
         SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dateTimeString = dbFormat.format(combinedCal.getTime());
 
         if (user == null || user.getUserId() == null) {
+<<<<<<< HEAD
             JOptionPane.showMessageDialog(this, 
                 "Impossible de prendre un rendez-vous : informations utilisateur manquantes.", 
                 "Erreur", 
@@ -231,19 +333,41 @@ public class RendezVousPage extends JFrame {
                 "Succès", 
                 JOptionPane.INFORMATION_MESSAGE);
             loadRendezVous();
+=======
+             JOptionPane.showMessageDialog(this, "Cannot book appointment: User information is missing.", "Error", JOptionPane.ERROR_MESSAGE);
+             return;
+        }
+
+        // Proceed with booking - *** CORRECTED CALL ***
+        boolean success = new RendezVousDAO().scheduleRendezVous(user.getUserId(), doctor, dateTimeString, reason);
+        
+        if (success) {
+            JOptionPane.showMessageDialog(this, "Rendez-Vous booked successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+            loadRendezVous(); // Reload the appointments
+            // Clear form
+>>>>>>> b7d30f253ec7af623949e037e345c4cd1b37cecf
             dateChooser.setDate(null);
             timeSpinner.setValue(new Date()); 
             reasonArea.setText("");
         } else {
+<<<<<<< HEAD
             JOptionPane.showMessageDialog(this, 
                 "Échec de l'enregistrement du rendez-vous. Consultez la console pour plus de détails.", 
                 "Erreur d'enregistrement", 
                 JOptionPane.ERROR_MESSAGE);
+=======
+            // The DAO method now prints detailed errors, so this message can be more general
+            JOptionPane.showMessageDialog(this, "Failed to book Rendez-Vous. Check console for details.", "Booking Error", JOptionPane.ERROR_MESSAGE);
+>>>>>>> b7d30f253ec7af623949e037e345c4cd1b37cecf
         }
     }
 
     // Main method for testing (requires jcalendar jar in classpath)
     public static void main(String[] args) {
+<<<<<<< HEAD
+=======
+         // Set Nimbus Look and Feel for better appearance
+>>>>>>> b7d30f253ec7af623949e037e345c4cd1b37cecf
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -252,12 +376,22 @@ public class RendezVousPage extends JFrame {
                 }
             }
         } catch (Exception e) {
+<<<<<<< HEAD
             System.err.println("Look and Feel Nimbus non trouvé, utilisation du style par défaut.");
         }
         
         SwingUtilities.invokeLater(() -> {
             User dummyUser = new User();
             dummyUser.setUserId("2");
+=======
+            System.err.println("Nimbus Look and Feel not found, using default.");
+        }
+        
+        SwingUtilities.invokeLater(() -> {
+            User dummyUser = new User(); // Replace with actual user retrieval if needed
+            dummyUser.setUserId("2"); // Use an ID that likely exists as a patient (e.g., linked to user 'user')
+            // Ensure the dummy user ID exists as a patient in the database for testing getRendezVousByUser
+>>>>>>> b7d30f253ec7af623949e037e345c4cd1b37cecf
             new RendezVousPage(dummyUser).setVisible(true);
         });
     }

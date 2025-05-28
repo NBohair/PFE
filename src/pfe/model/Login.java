@@ -177,6 +177,10 @@ public class Login extends JFrame {
     }
 
     public static void main(String[] args) {
+<<<<<<< HEAD
+=======
+        // Ensure Look and Feel is set (consider moving this to Main.java if not already there)
+>>>>>>> b7d30f253ec7af623949e037e345c4cd1b37cecf
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -184,6 +188,7 @@ public class Login extends JFrame {
                     break;
                 }
             }
+<<<<<<< HEAD
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
             System.err.println("Erreur lors de l'initialisation du Look and Feel: " + e.getMessage());
             try {
@@ -191,6 +196,10 @@ public class Login extends JFrame {
             } catch (Exception ex) {
                 System.err.println("Impossible de charger le Look and Feel système: " + ex.getMessage());
             }
+=======
+        } catch (Exception e) {
+            // Handle exception
+>>>>>>> b7d30f253ec7af623949e037e345c4cd1b37cecf
         }
         
         SwingUtilities.invokeLater(() -> {
